@@ -1,0 +1,50 @@
+package com.klef.fsad.exam;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+
+import java.util.Date;
+
+public class ClientDemo 
+{
+    public static void main(String[] args) 
+    {
+        SessionFactory factory = new Configuration().configure().buildSessionFactory();
+        Session session = factory.openSession();
+
+        session.beginTransaction();
+
+        // 🔹 INSERT OPERATION
+        Inventory item = new Inventory();
+        item.setName("Laptop");
+        item.setDescription("Dell i5");
+        item.setDate(new Date());
+        item.setStatus("Available");
+
+        session.save(item);
+
+        System.out.println("Inserted Successfully with ID: " + item.getId());
+
+        session.getTransaction().commit();
+
+        // 🔹 DELETE OPERATION
+        session.beginTransaction();
+
+        Inventory deleteItem = session.get(Inventory.class, item.getId());
+        if(deleteItem != null)
+        {
+            session.delete(deleteItem);
+            System.out.println("Deleted Successfully");
+        }
+        else
+        {
+            System.out.println("Record Not Found");
+        }
+
+        session.getTransaction().commit();
+
+        session.close();
+        factory.close();
+    }
+}
